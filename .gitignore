@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+
+# generated reports
+/out/
+*.rca.md
+!examples/*.rca.md
+
+.DS_Store
