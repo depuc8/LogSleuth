@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+# logsleuth - Unix log analyzer and root-cause tool.
+set -euo pipefail
+
+VERSION="0.1.0"
+
+# Resolve the real location of this script (following symlinks) so the awk
+# and sed files in ../lib are found however it was invoked.
+resolve_self() {
+    local src="${BASH_SOURCE[0]}" dir
+    while [ -L "$src" ]; do
+        dir="$(cd -P "$(dirname "$src")" && pwd)"
+        src="$(readlink "$src")"
+        case "$src" in /*) ;; *) src="$dir/$src" ;; esac
+    done
+    cd -P "$(dirname "$src")/.." && pwd
+}
+ROOT="$(resolve_self)"
+LIB="$ROOT/lib"
+
+die() { echo "logsleuth: $*" >&2; exit 2; }
+
+usage() {
+    cat <<USAGE
+logsleuth $VERSION - Unix log analyzer and root-cause tool
+
+Usage:
+  logsleuth parse [--year YYYY] [--host NAME] FILE...
+  logsleuth normalize [FILE]
+  logsleuth --version | --help
+
+Commands:
+  parse       read syslog / application logs, print one normalized record
+              per line: timestamp, host, process, level, message
+  normalize   read records from FILE (or stdin) and append a message
+              signature column
+
+FILE may be "-" for stdin; *.gz files are decompressed on the fly.
+USAGE
+}
+
+# cat a file, transparently decompressing .gz; "-" means stdin
+read_file() {
+    case "$1" in
+        -)    cat ;;
+        *.gz) gzip -dc -- "$1" ;;
+        *)    cat -- "$1" ;;
+    esac
+}
+
+cmd_parse() {
+    local year="" host=""
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --year) year="${2:?--year needs a value}"; shift 2 ;;
+            --host) host="${2:?--host needs a value}"; shift 2 ;;
+            --) shift; break ;;
+            -?*) if [ "$1" = "-" ]; then break; fi; die "parse: unknown option $1" ;;
+            *) break ;;
+        esac
+    done
+    [ $# -gt 0 ] || die "parse: no input files"
+
+    local f src
+    for f in "$@"; do
+        [ "$f" = "-" ] || [ -r "$f" ] || die "cannot read $f"
+        src="$f"; [ "$f" = "-" ] && src="stdin"
+        read_file "$f" | awk -v year="$year" -v host="$host" -v source="$src" \
+            -f "$LIB/parse.awk"
+    done
+}
+
+# Append a signature column. sed can't be told to touch a single field, so
+# the message column is run through it on its own and pasted back alongside.
+cmd_normalize() {
+    local tmp
+    tmp="$(mktemp -d "${TMPDIR:-/tmp}/logsleuth.XXXXXX")"
+    trap "rm -rf '$tmp'" EXIT
+
+    read_file "${1:--}" > "$tmp/records"
+    cut -f5 "$tmp/records" | sed -E -f "$LIB/normalize.sed" > "$tmp/sigs"
+    paste -d '\t' "$tmp/records" "$tmp/sigs"
+}
+
+main() {
+    [ $# -gt 0 ] || { usage >&2; exit 2; }
+    local cmd="$1"; shift
+    case "$cmd" in
+        parse)           cmd_parse "$@" ;;
+        normalize)       cmd_normalize "$@" ;;
+        -h|--help|help)  usage ;;
+        -V|--version)    echo "logsleuth $VERSION" ;;
+        *)               die "unknown command '$cmd' (try --help)" ;;
+    esac
+}
+
+main "$@"
