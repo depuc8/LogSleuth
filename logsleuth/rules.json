@@ -1,0 +1,191 @@
+[
+  {
+    "id": "db-connections-exhausted",
+    "category": "Database",
+    "role": "cause",
+    "weight": 3.0,
+    "pattern": "(remaining connection slots|too many connections|connection pool.*(exhaust|full|timeout)|connection is not available|unable to acquire.*connection|pool.*timed out|max_connections)",
+    "cause": "The database connection pool is exhausted: requests are queueing for a connection faster than connections are released.",
+    "fix": [
+      "Look for connection leaks or long-held transactions in the code that changed just before onset; roll it back if a deploy lines up.",
+      "Check live usage: SELECT count(*), state FROM pg_stat_activity GROUP BY state; (or SHOW PROCESSLIST on MySQL).",
+      "Short term, raise the pool size / max_connections within what the database can serve, or put a pooler such as PgBouncer in front.",
+      "Add a connection acquisition timeout and a pool-saturation alert so the next one is caught early."
+    ]
+  },
+  {
+    "id": "slow-queries-locks",
+    "category": "Database",
+    "role": "cause",
+    "weight": 2.0,
+    "pattern": "(slow query|statement timeout|lock wait timeout|deadlock detected|canceling statement|long[- ]running (query|transaction))",
+    "cause": "Database queries are slow or blocked on locks, holding connections and backing work up behind them.",
+    "fix": [
+      "Find the offending statements with the slow query log or pg_stat_statements and EXPLAIN them.",
+      "Look for a missing index, a lock held by a long transaction, or a migration running on a hot table.",
+      "Set statement and lock timeouts so one bad query can't stall the pool."
+    ]
+  },
+  {
+    "id": "out-of-memory",
+    "category": "Memory",
+    "role": "cause",
+    "weight": 3.0,
+    "pattern": "(out of memory|oom-kill|oom_reaper|killed process|cannot allocate memory|java\\.lang\\.outofmemoryerror|memoryerror|memory cgroup out of memory)",
+    "cause": "A process ran out of memory and was killed (or failed to allocate), which restarts or drops whatever it was serving.",
+    "fix": [
+      "Identify the victim and its peak RSS in the kernel log (dmesg | grep -i 'killed process').",
+      "Check for a leak or an unbounded cache/queue introduced recently; compare memory graphs against the last deploy.",
+      "Right-size the memory limit, add swap or headroom as a stopgap, and alert on memory pressure before the OOM killer acts."
+    ]
+  },
+  {
+    "id": "disk-full",
+    "category": "Storage",
+    "role": "cause",
+    "weight": 3.0,
+    "pattern": "(no space left on device|disk quota exceeded|filesystem.*full|write failed.*disk|errno 28)",
+    "cause": "A filesystem is full, so writes (logs, temp files, database data) are failing.",
+    "fix": [
+      "Find the full mount (df -h) and the biggest consumers (du -xh --max-depth=2 /var | sort -h | tail).",
+      "Free space safely: rotate or compress logs, clear package and temp caches, remove stale core dumps.",
+      "Fix log rotation or retention so it doesn't refill, and alert at 80% usage."
+    ]
+  },
+  {
+    "id": "fd-exhausted",
+    "category": "Resources",
+    "role": "cause",
+    "weight": 2.5,
+    "pattern": "(too many open files|emfile|file table overflow|socket: too many)",
+    "cause": "The process hit its open file descriptor limit, so new sockets and files can't be opened.",
+    "fix": [
+      "Check the current usage (ls /proc/<pid>/fd | wc -l) against the limit (ulimit -n, LimitNOFILE in the unit file).",
+      "Look for a descriptor leak: unclosed sockets, files, or connections pooled without a cap.",
+      "Raise LimitNOFILE as a stopgap once you know the leak is not the cause."
+    ]
+  },
+  {
+    "id": "disk-io-errors",
+    "category": "Storage",
+    "role": "cause",
+    "weight": 3.0,
+    "pattern": "(i/o error|blk_update_request|read-only file system|remounting filesystem read-only|ext4-fs error|xfs.*(corruption|metadata))",
+    "cause": "The storage layer is reporting I/O errors or has remounted read-only, which usually means a failing disk, volume, or controller.",
+    "fix": [
+      "Check SMART / cloud volume health and the kernel log for the device named in the errors.",
+      "Move the workload off the affected volume, then run fsck once it is unmounted.",
+      "Restore from backup if data was lost; replace the device."
+    ]
+  },
+  {
+    "id": "dns-failure",
+    "category": "Network",
+    "role": "cause",
+    "weight": 2.5,
+    "pattern": "(temporary failure in name resolution|could not resolve|name or service not known|nxdomain|servfail|unknown host|getaddrinfo.*(failed|enotfound))",
+    "cause": "Name resolution is failing, so services can't find their dependencies.",
+    "fix": [
+      "Test from the affected host: dig <name> and check /etc/resolv.conf and the resolver's own logs.",
+      "Look for a resolver outage, a changed record, or a rate-limited upstream DNS server.",
+      "Add a local caching resolver and retry with backoff so a blip doesn't cascade."
+    ]
+  },
+  {
+    "id": "connection-refused",
+    "category": "Network",
+    "role": "cause",
+    "weight": 2.0,
+    "pattern": "(connection refused|econnrefused|no route to host|network is unreachable|connection reset by peer)",
+    "cause": "A dependency is refusing or dropping connections: it is down, not yet listening, or blocked by a firewall.",
+    "fix": [
+      "Check that the target service is running and listening (systemctl status, ss -ltnp).",
+      "Review firewall / security group changes and recent restarts of the dependency.",
+      "Add health checks and retry with backoff so dependents wait out restarts."
+    ]
+  },
+  {
+    "id": "tls-certificate",
+    "category": "Security",
+    "role": "cause",
+    "weight": 2.5,
+    "pattern": "(certificate (has )?(expired|verify failed|is not yet valid)|x509|ssl.*(handshake|verify).*fail|tlsv1 alert)",
+    "cause": "A TLS certificate is expired, invalid, or untrusted, so secure connections are being rejected.",
+    "fix": [
+      "Inspect the certificate: openssl s_client -connect host:443 -servername host | openssl x509 -noout -dates.",
+      "Renew or redeploy the certificate and restart whatever caches it.",
+      "Automate renewal and alert at 21 days before expiry."
+    ]
+  },
+  {
+    "id": "process-crash",
+    "category": "Process",
+    "role": "cause",
+    "weight": 2.5,
+    "pattern": "(segfault|core dumped|signal 11|main process exited|failed with result|start request repeated too quickly|crashed|panic:)",
+    "cause": "A process is crashing and being restarted, interrupting work in flight.",
+    "fix": [
+      "Pull the crash details: journalctl -u <unit> -b, coredumpctl info.",
+      "Correlate the first crash with a deploy or config change and roll it back if they match.",
+      "Capture a core dump or stack trace and fix the crash; add a restart back-off so a crash loop can't hammer dependencies."
+    ]
+  },
+  {
+    "id": "rate-limited",
+    "category": "Traffic",
+    "role": "cause",
+    "weight": 1.5,
+    "pattern": "(rate limit|throttl|too many requests|429)",
+    "cause": "Requests are being rate limited, either by this service protecting itself or by an upstream provider.",
+    "fix": [
+      "Identify who is being limited and whether traffic grew or a client started retrying aggressively.",
+      "Add client-side backoff with jitter and request quotas; raise limits only if the load is legitimate."
+    ]
+  },
+  {
+    "id": "auth-attack",
+    "category": "Security",
+    "role": "cause",
+    "weight": 1.5,
+    "pattern": "(failed password|authentication failure|invalid user|too many authentication failures)",
+    "cause": "A burst of failed logins, consistent with credential guessing against the host.",
+    "fix": [
+      "Check the source addresses (they are collapsed in the signature; grep the raw log) and block abusers with fail2ban or firewall rules.",
+      "Disable password logins in favour of keys and restrict SSH to known networks."
+    ]
+  },
+  {
+    "id": "permission-denied",
+    "category": "Configuration",
+    "role": "cause",
+    "weight": 1.5,
+    "pattern": "(permission denied|eacces|operation not permitted|access denied)",
+    "cause": "Operations are failing on permissions, typically after a deploy, ownership change, or policy update.",
+    "fix": [
+      "Check ownership and modes on the path or resource named in the error, and any SELinux/AppArmor denials (ausearch -m avc).",
+      "Compare with the last known-good configuration and restore the permissions."
+    ]
+  },
+  {
+    "id": "upstream-timeouts",
+    "category": "Symptom",
+    "role": "symptom",
+    "weight": 1.0,
+    "pattern": "(upstream timed out|gateway time-?out|upstream prematurely closed|upstream.*(failed|unavailable)|bad gateway|service unavailable| 50[234] )",
+    "cause": "The front end is timing out talking to an upstream service. This is a symptom; the cause is whatever is making the upstream slow or unavailable.",
+    "fix": [
+      "Look at the other signatures that began just before these errors: the upstream's own errors usually name the cause."
+    ]
+  },
+  {
+    "id": "request-timeouts",
+    "category": "Symptom",
+    "role": "symptom",
+    "weight": 1.0,
+    "pattern": "(request (timed out|timeout)|timed out after|read timed out|deadline exceeded|timeout waiting)",
+    "cause": "Calls are timing out. This is a symptom of a slow or unreachable dependency.",
+    "fix": [
+      "Find the dependency being called and check its health and saturation."
+    ]
+  }
+]
