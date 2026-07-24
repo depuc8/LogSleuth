@@ -121,7 +121,7 @@ def _likely_cause(d: Diagnosis) -> List[str]:
 
 
 def _candidate_rows(cands: Sequence[Candidate]) -> List[List[str]]:
-    return [[str(i), f"{c.score:.1f}", _t(c.onset), _code(c.sig, 70),
+    return [[str(i), f"{c.score:.1f}", _hms(c.onset), _code(c.sig, 70),
              _cell(c.source, 30), f"{c.count:,}",
              c.rule.id if c.rule else "-"]
             for i, c in enumerate(cands, 1)]

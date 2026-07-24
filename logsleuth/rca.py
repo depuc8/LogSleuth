@@ -75,7 +75,7 @@ def _candidates(inc: Incident, rules: List[Rule]) -> List[Candidate]:
     new = set(inc.new_sigs)
     spike_start: Dict[str, int] = {}
     for ss in inc.spikes:
-        spike_start.setdefault(ss.sig.sig, ss.spike.start)
+        spike_start.setdefault(ss.sig.sig, ss.first_ts)
 
     found: Dict[str, Candidate] = {}
 
@@ -100,8 +100,9 @@ def _candidates(inc: Incident, rules: List[Rule]) -> List[Candidate]:
         if w.sig in new or w.sig in spike_start:
             upsert(w.sig, w.level, w.example, w.source, w.first_in_window, w.count)
 
-    # A signature that was already around turned abnormal when it spiked, not
-    # at its first stray occurrence; a brand-new one starts at first sight.
+    # A signature that was already around turned abnormal when it spiked (the
+    # first occurrence inside the spike), not at its first stray occurrence;
+    # a brand-new one starts at first sight.
     for sig, start in spike_start.items():
         c = found.get(sig)
         if c is not None:

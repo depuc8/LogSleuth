@@ -1,5 +1,6 @@
 """The analysis pipeline: records in, incidents (spikes plus context) out."""
 
+import bisect
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Sequence, Tuple
@@ -26,6 +27,7 @@ class Options:
 class SigSpike:
     sig: Signature
     spike: Spike
+    first_ts: int          # first real occurrence inside the spike's buckets
 
 
 @dataclass
@@ -130,7 +132,9 @@ def analyze(records: Sequence[Record], opts: Optional[Options] = None) -> Analys
             continue
         counts = bucketize(sig.timestamps, t0, t1, width)
         for sp in detect_spikes(counts, t0, width, opts.z, opts.min_count):
-            sig_spikes.append(SigSpike(sig, sp))
+            # timestamps are in time order, so bisect finds the first hit
+            first = sig.timestamps[bisect.bisect_left(sig.timestamps, sp.start)]
+            sig_spikes.append(SigSpike(sig, sp, first))
 
     intervals = [(s.start, s.end) for s in analysis.global_spikes]
     intervals += [(s.spike.start, s.spike.end) for s in sig_spikes]
