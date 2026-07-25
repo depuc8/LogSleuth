@@ -19,6 +19,7 @@
 #           (default: the current year)
 #   host    host name for formats that don't carry one (default: "-")
 #   source  label used in diagnostics (default: the input file name)
+#   quiet   set to 1 to suppress the per-file summary on stderr
 #
 # Only POSIX awk features are used, so this runs on gawk, mawk and BSD awk.
 
@@ -185,6 +186,7 @@ BEGIN {
 { skipped++ }
 
 END {
+    if (quiet == 1) exit
     printf "parse.awk: %s: %d records, %d lines skipped\n", \
         (source != "" ? source : FILENAME), parsed, skipped > "/dev/stderr"
 }

@@ -17,6 +17,17 @@ resolve_self() {
 }
 ROOT="$(resolve_self)"
 LIB="$ROOT/lib"
+PYTHON="${PYTHON:-python3}"
+
+# Every temp dir is registered here and removed by the single EXIT trap, so
+# commands that call each other can't clobber one another's cleanup.
+TMPS=()
+cleanup() { [ ${#TMPS[@]} -eq 0 ] || rm -rf "${TMPS[@]}"; }
+trap cleanup EXIT
+make_tmp() {
+    TMP="$(mktemp -d "${TMPDIR:-/tmp}/logsleuth.XXXXXX")"
+    TMPS+=("$TMP")
+}
 
 die() { echo "logsleuth: $*" >&2; exit 2; }
 
@@ -25,15 +36,31 @@ usage() {
 logsleuth $VERSION - Unix log analyzer and root-cause tool
 
 Usage:
+  logsleuth analyze [options] FILE...
   logsleuth parse [--year YYYY] [--host NAME] FILE...
   logsleuth normalize [FILE]
   logsleuth --version | --help
 
 Commands:
+  analyze     run the whole pipeline and write a Markdown RCA report
   parse       read syslog / application logs, print one normalized record
               per line: timestamp, host, process, level, message
   normalize   read records from FILE (or stdin) and append a message
               signature column
+
+analyze options:
+  -o, --out FILE      write the report to FILE (default: stdout)
+  --year YYYY         year for syslog timestamps (default: current year)
+  --host NAME         host for logs that don't name one (default: file name)
+  --width SECONDS     bucket width (default: chosen from the time span)
+  -z SIGMAS           spike threshold above the median (default 3.5)
+  --min-count N       ignore buckets with fewer events (default 5)
+  --lead SECONDS      run-up before a spike to inspect (default 600)
+  --tail SECONDS      time after a spike to inspect (default 300)
+  --lookback SECONDS  how far back to look for deploys (default 1800)
+  --top N             rows per table (default 10)
+  --rules FILE        extra rules JSON (repeatable)
+  -q, --quiet         no progress messages on stderr
 
 FILE may be "-" for stdin; *.gz files are decompressed on the fly.
 USAGE
@@ -66,26 +93,70 @@ cmd_parse() {
         [ "$f" = "-" ] || [ -r "$f" ] || die "cannot read $f"
         src="$f"; [ "$f" = "-" ] && src="stdin"
         read_file "$f" | awk -v year="$year" -v host="$host" -v source="$src" \
-            -f "$LIB/parse.awk"
+            -v quiet="${LOGSLEUTH_QUIET:-0}" -f "$LIB/parse.awk"
     done
 }
 
 # Append a signature column. sed can't be told to touch a single field, so
 # the message column is run through it on its own and pasted back alongside.
 cmd_normalize() {
-    local tmp
-    tmp="$(mktemp -d "${TMPDIR:-/tmp}/logsleuth.XXXXXX")"
-    trap "rm -rf '$tmp'" EXIT
+    make_tmp
+    local tmp="$TMP"
 
     read_file "${1:--}" > "$tmp/records"
     cut -f5 "$tmp/records" | sed -E -f "$LIB/normalize.sed" > "$tmp/sigs"
     paste -d '\t' "$tmp/records" "$tmp/sigs"
 }
 
+# Run parse -> normalize -> Python analysis over one or more logs.
+cmd_analyze() {
+    local year="" host="" out="" files=() pyargs=() sources=()
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --year) year="${2:?--year needs a value}"; shift 2 ;;
+            --host) host="${2:?--host needs a value}"; shift 2 ;;
+            -o|--out) out="${2:?$1 needs a value}"; shift 2 ;;
+            -q|--quiet) export LOGSLEUTH_QUIET=1; shift ;;
+            --width|-z|--min-count|--lead|--tail|--lookback|--top|--rules)
+                pyargs+=("$1" "${2:?$1 needs a value}"); shift 2 ;;
+            --) shift; files+=("$@"); break ;;
+            -) files+=("-"); shift ;;
+            -*) die "analyze: unknown option $1" ;;
+            *) files+=("$1"); shift ;;
+        esac
+    done
+    [ ${#files[@]} -gt 0 ] || die "analyze: no input files"
+    command -v "$PYTHON" >/dev/null 2>&1 || die "$PYTHON not found (set PYTHON)"
+
+    local f h
+    make_tmp
+    local tmp="$TMP"
+
+    # Logs that don't carry a host name are labelled with their file name so
+    # the report still says where an error came from.
+    for f in "${files[@]}"; do
+        h="$host"
+        if [ -z "$h" ]; then
+            if [ "$f" = "-" ]; then h="-"; else
+                h="$(basename -- "$f")"; h="${h%.gz}"; h="${h%.*}"
+            fi
+        fi
+        cmd_parse ${year:+--year "$year"} --host "$h" "$f" >> "$tmp/parsed"
+        sources+=(--source "$f")
+    done
+    [ -s "$tmp/parsed" ] || echo "logsleuth: warning: no log records recognised" >&2
+
+    cmd_normalize "$tmp/parsed" > "$tmp/records"
+    PYTHONPATH="$ROOT${PYTHONPATH:+:$PYTHONPATH}" "$PYTHON" -m logsleuth \
+        ${out:+--out "$out"} "${sources[@]}" ${pyargs[@]+"${pyargs[@]}"} "$tmp/records"
+    [ -z "$out" ] || { [ "${LOGSLEUTH_QUIET:-0}" = 1 ] || echo "logsleuth: report written to $out" >&2; }
+}
+
 main() {
     [ $# -gt 0 ] || { usage >&2; exit 2; }
     local cmd="$1"; shift
     case "$cmd" in
+        analyze)         cmd_analyze "$@" ;;
         parse)           cmd_parse "$@" ;;
         normalize)       cmd_normalize "$@" ;;
         -h|--help|help)  usage ;;
