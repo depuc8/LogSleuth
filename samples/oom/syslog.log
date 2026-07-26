@@ -1,0 +1,128 @@
+Jul 14 13:00:00 app01 CRON[2299]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:02:02 web01 sshd[1377]: Accepted publickey for deploy from 10.0.0.25 port 58783 ssh2
+Jul 14 13:03:04 web01 sshd[15914]: Accepted publickey for deploy from 10.0.0.12 port 55883 ssh2
+Jul 14 13:03:57 web01 sshd[2345]: Failed password for invalid user test from 192.0.2.201 port 38114 ssh2
+Jul 14 13:04:24 web01 sshd[20834]: Accepted publickey for deploy from 10.0.0.12 port 58099 ssh2
+Jul 14 13:05:00 app01 CRON[6288]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:07:58 web01 sshd[15738]: Accepted publickey for deploy from 10.0.0.25 port 59103 ssh2
+Jul 14 13:10:00 app01 CRON[7508]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:10:27 db01 postgres[614]: checkpoint complete: wrote 595 buffers
+Jul 14 13:10:29 web01 sshd[17099]: Failed password for invalid user test from 198.51.100.23 port 55993 ssh2
+Jul 14 13:11:03 web01 sshd[7771]: Failed password for invalid user admin from 198.51.100.23 port 41813 ssh2
+Jul 14 13:12:39 web01 sshd[29646]: Failed password for invalid user oracle from 198.51.100.23 port 59187 ssh2
+Jul 14 13:13:29 web01 sshd[14100]: Failed password for invalid user oracle from 198.51.100.23 port 45838 ssh2
+Jul 14 13:15:00 app01 CRON[2417]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:15:03 web01 sshd[29370]: Failed password for invalid user admin from 203.0.113.9 port 38194 ssh2
+Jul 14 13:15:20 web01 sshd[16069]: Failed password for invalid user admin from 198.51.100.23 port 30374 ssh2
+Jul 14 13:15:26 db01 postgres[783]: checkpoint complete: wrote 578 buffers
+Jul 14 13:15:39 web01 sshd[12430]: Accepted publickey for deploy from 10.0.0.16 port 40636 ssh2
+Jul 14 13:16:40 db01 postgres[531]: checkpoint complete: wrote 583 buffers
+Jul 14 13:16:46 web01 sshd[19088]: Failed password for invalid user test from 192.0.2.77 port 55729 ssh2
+Jul 14 13:18:02 web01 sshd[8784]: Failed password for invalid user test from 198.51.100.140 port 54646 ssh2
+Jul 14 13:20:00 app01 CRON[6574]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:21:37 db01 postgres[859]: checkpoint complete: wrote 509 buffers
+Jul 14 13:21:46 web01 sshd[22282]: Failed password for invalid user ubuntu from 192.0.2.201 port 51098 ssh2
+Jul 14 13:23:11 web01 sshd[24851]: Failed password for invalid user test from 198.51.100.140 port 30067 ssh2
+Jul 14 13:24:09 db01 postgres[771]: checkpoint complete: wrote 781 buffers
+Jul 14 13:25:00 app01 CRON[6826]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:26:29 web01 sshd[23184]: Failed password for invalid user oracle from 198.51.100.23 port 39775 ssh2
+Jul 14 13:29:03 web01 sshd[10275]: Failed password for invalid user oracle from 192.0.2.201 port 49439 ssh2
+Jul 14 13:30:00 app01 CRON[6085]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:30:30 db01 postgres[885]: checkpoint complete: wrote 462 buffers
+Jul 14 13:31:38 web01 sshd[21531]: Failed password for invalid user oracle from 198.51.100.23 port 35124 ssh2
+Jul 14 13:31:42 app01 kernel[0]: Out of memory: Killed process 4411 (java) total-vm:9124412kB, anon-rss:7340212kB, file-rss:0kB, shmem-rss:0kB
+Jul 14 13:31:43 app01 systemd[1]: orders-api.service: Main process exited, code=killed, status=9/KILL
+Jul 14 13:31:43 app01 systemd[1]: orders-api.service: Failed with result 'oom-kill'.
+Jul 14 13:31:43 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/65356 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/65356"
+Jul 14 13:31:44 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/72632 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/72632"
+Jul 14 13:31:45 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/67703 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/67703"
+Jul 14 13:31:46 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/85184 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/85184"
+Jul 14 13:31:47 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.23, server: shop.example.com, request: "GET /api/v1/orders/32042 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/32042"
+Jul 14 13:31:48 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/72111 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/72111"
+Jul 14 13:31:49 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/1494 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/1494"
+Jul 14 13:31:50 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/91646 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/91646"
+Jul 14 13:31:51 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/9238 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/9238"
+Jul 14 13:31:52 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/80975 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/80975"
+Jul 14 13:31:53 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/95910 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/95910"
+Jul 14 13:31:54 app01 systemd[1]: Started orders-api.service - Orders API.
+Jul 14 13:31:54 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/9344 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/9344"
+Jul 14 13:31:55 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/47067 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/47067"
+Jul 14 13:31:56 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/83098 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/83098"
+Jul 14 13:31:57 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/28942 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/28942"
+Jul 14 13:31:58 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/96712 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/96712"
+Jul 14 13:31:59 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/13527 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/13527"
+Jul 14 13:32:00 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/74711 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/74711"
+Jul 14 13:32:01 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/42436 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/42436"
+Jul 14 13:32:02 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.23, server: shop.example.com, request: "GET /api/v1/orders/44445 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/44445"
+Jul 14 13:32:03 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/79098 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/79098"
+Jul 14 13:32:04 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.23, server: shop.example.com, request: "GET /api/v1/orders/67551 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/67551"
+Jul 14 13:32:05 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/25535 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/25535"
+Jul 14 13:32:07 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/89382 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/89382"
+Jul 14 13:32:08 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/23822 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/23822"
+Jul 14 13:32:09 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.23, server: shop.example.com, request: "GET /api/v1/orders/56465 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/56465"
+Jul 14 13:32:10 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/67398 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/67398"
+Jul 14 13:32:11 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/85444 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/85444"
+Jul 14 13:32:12 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/43416 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/43416"
+Jul 14 13:32:13 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/62241 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/62241"
+Jul 14 13:32:14 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/98690 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/98690"
+Jul 14 13:32:15 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/29470 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/29470"
+Jul 14 13:32:16 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.23, server: shop.example.com, request: "GET /api/v1/orders/31633 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/31633"
+Jul 14 13:32:18 web01 sshd[6383]: Failed password for invalid user ubuntu from 192.0.2.201 port 48967 ssh2
+Jul 14 13:32:18 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/29215 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/29215"
+Jul 14 13:32:19 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/40699 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/40699"
+Jul 14 13:33:06 db01 postgres[884]: checkpoint complete: wrote 268 buffers
+Jul 14 13:33:50 web01 sshd[27191]: Failed password for invalid user admin from 192.0.2.201 port 53129 ssh2
+Jul 14 13:34:04 web01 sshd[22564]: Failed password for invalid user test from 192.0.2.201 port 34187 ssh2
+Jul 14 13:35:00 app01 CRON[5930]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:37:27 db01 postgres[789]: checkpoint complete: wrote 452 buffers
+Jul 14 13:37:28 web01 sshd[3462]: Failed password for invalid user oracle from 198.51.100.23 port 51015 ssh2
+Jul 14 13:39:31 db01 postgres[696]: checkpoint complete: wrote 128 buffers
+Jul 14 13:39:54 db01 postgres[694]: checkpoint complete: wrote 357 buffers
+Jul 14 13:40:00 app01 CRON[6261]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:41:20 app01 kernel[0]: Out of memory: Killed process 5180 (java) total-vm:9201124kB, anon-rss:7422920kB, file-rss:0kB, shmem-rss:0kB
+Jul 14 13:41:21 app01 systemd[1]: orders-api.service: Main process exited, code=killed, status=9/KILL
+Jul 14 13:41:21 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/17826 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/17826"
+Jul 14 13:41:22 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/46552 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/46552"
+Jul 14 13:41:23 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/66539 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/66539"
+Jul 14 13:41:24 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/56454 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/56454"
+Jul 14 13:41:25 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/15397 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/15397"
+Jul 14 13:41:26 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.23, server: shop.example.com, request: "GET /api/v1/orders/58986 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/58986"
+Jul 14 13:41:27 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/21436 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/21436"
+Jul 14 13:41:28 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/52086 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/52086"
+Jul 14 13:41:29 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/94910 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/94910"
+Jul 14 13:41:30 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/44250 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/44250"
+Jul 14 13:41:31 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/43213 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/43213"
+Jul 14 13:41:32 app01 systemd[1]: Started orders-api.service - Orders API.
+Jul 14 13:41:32 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/80185 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/80185"
+Jul 14 13:41:33 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/80719 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/80719"
+Jul 14 13:41:35 web01 sshd[24790]: Failed password for invalid user ubuntu from 203.0.113.9 port 34384 ssh2
+Jul 14 13:41:35 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/78996 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/78996"
+Jul 14 13:41:37 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/56678 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/56678"
+Jul 14 13:41:38 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/81576 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/81576"
+Jul 14 13:41:39 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/75988 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/75988"
+Jul 14 13:41:40 db01 postgres[539]: checkpoint complete: wrote 504 buffers
+Jul 14 13:41:40 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/73302 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/73302"
+Jul 14 13:41:41 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/58451 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/58451"
+Jul 14 13:41:42 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/44543 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/44543"
+Jul 14 13:41:43 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/74677 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/74677"
+Jul 14 13:41:44 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/92918 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/92918"
+Jul 14 13:41:45 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/33140 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/33140"
+Jul 14 13:41:47 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/91904 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/91904"
+Jul 14 13:41:48 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.77, server: shop.example.com, request: "GET /api/v1/orders/69392 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/69392"
+Jul 14 13:41:49 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.9, server: shop.example.com, request: "GET /api/v1/orders/65726 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/65726"
+Jul 14 13:41:50 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 198.51.100.140, server: shop.example.com, request: "GET /api/v1/orders/17061 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/17061"
+Jul 14 13:41:51 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/85373 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/85373"
+Jul 14 13:41:52 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 203.0.113.45, server: shop.example.com, request: "GET /api/v1/orders/46253 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/46253"
+Jul 14 13:41:53 web01 nginx[812]: connect() failed (111: Connection refused) while connecting to upstream, client: 192.0.2.201, server: shop.example.com, request: "GET /api/v1/orders/86689 HTTP/1.1", upstream: "http://10.0.1.12:8080/api/v1/orders/86689"
+Jul 14 13:42:11 web01 sshd[17326]: Failed password for invalid user test from 203.0.113.9 port 50600 ssh2
+Jul 14 13:43:18 web01 sshd[18723]: Failed password for invalid user ubuntu from 203.0.113.9 port 33092 ssh2
+Jul 14 13:43:44 web01 sshd[6167]: Failed password for invalid user test from 198.51.100.23 port 46210 ssh2
+Jul 14 13:44:21 db01 postgres[634]: checkpoint complete: wrote 410 buffers
+Jul 14 13:44:44 web01 sshd[7487]: Failed password for invalid user admin from 203.0.113.9 port 45296 ssh2
+Jul 14 13:45:00 app01 CRON[7480]: (root) CMD (/usr/lib64/sa/sa1 1 1)
+Jul 14 13:45:53 db01 postgres[633]: checkpoint complete: wrote 874 buffers
+Jul 14 13:47:14 db01 postgres[568]: checkpoint complete: wrote 705 buffers
+Jul 14 13:47:40 db01 postgres[581]: checkpoint complete: wrote 649 buffers
+Jul 14 13:49:13 db01 postgres[683]: checkpoint complete: wrote 176 buffers
+Jul 14 13:49:14 web01 sshd[12995]: Accepted publickey for deploy from 10.0.0.3 port 40366 ssh2
+Jul 14 13:49:26 web01 sshd[11150]: Failed password for invalid user ubuntu from 203.0.113.45 port 59756 ssh2
