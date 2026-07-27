@@ -17,6 +17,13 @@ CHANGE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# Auth chatter mentions "deploy" as a user name; it is not a deployment.
+NOT_A_CHANGE_RE = re.compile(
+    r"^(Accepted|Failed|Invalid|Received disconnect|Disconnected|"
+    r"Connection (closed|reset)|pam_unix|session (opened|closed))",
+    re.IGNORECASE,
+)
+
 
 class Index:
     """Time-ordered records with fast [lo, hi) slicing."""
@@ -52,7 +59,8 @@ def change_events(index: Index, lo: int, hi: int, limit: int = 12) -> List[Recor
     found: List[Record] = []
     last_sig = None
     for rec in index.between(lo, hi):
-        if rec.is_error or not CHANGE_RE.search(rec.msg):
+        if (rec.is_error or NOT_A_CHANGE_RE.search(rec.msg)
+                or not CHANGE_RE.search(rec.msg)):
             continue
         if rec.sig == last_sig:
             continue
