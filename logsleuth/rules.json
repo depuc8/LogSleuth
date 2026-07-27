@@ -40,6 +40,19 @@
     ]
   },
   {
+    "id": "memory-pressure",
+    "category": "Memory",
+    "role": "cause",
+    "weight": 2.0,
+    "pattern": "(heap (usage|space)|gc (overhead|pauses?)|garbage collection.*(pause|overhead)|memory pressure|low on memory|swap(ping)? (is )?(heavy|full))",
+    "cause": "Memory is nearly exhausted and garbage collection or swapping is struggling to keep up. This usually precedes an out-of-memory kill.",
+    "fix": [
+      "Compare heap/RSS growth against the last deploy; a steady climb that never plateaus is a leak.",
+      "Take a heap dump (jcmd <pid> GC.heap_dump) or profile allocations while usage is high.",
+      "Cap caches and queues, and size the memory limit with headroom; alert on sustained high heap after GC."
+    ]
+  },
+  {
     "id": "disk-full",
     "category": "Storage",
     "role": "cause",
