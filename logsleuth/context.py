@@ -17,6 +17,13 @@ CHANGE_RE = re.compile(
     re.IGNORECASE,
 )
 
+# The subset of changes that are deliberate (as opposed to a unit starting).
+STRONG_CHANGE_RE = re.compile(
+    r"(deploy|releas(e|ing)|upgrad|migrat|roll(ed)?[ -]?back|"
+    r"config(uration)? (change|updat|reload)|scal(e|ed|ing) (up|down|to))",
+    re.IGNORECASE,
+)
+
 # Auth chatter mentions "deploy" as a user name; it is not a deployment.
 NOT_A_CHANGE_RE = re.compile(
     r"^(Accepted|Failed|Invalid|Received disconnect|Disconnected|"

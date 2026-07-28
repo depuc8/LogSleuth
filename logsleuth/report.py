@@ -113,10 +113,10 @@ def _likely_cause(d: Diagnosis) -> List[str]:
                      f"{_code(d.change.msg)} ({d.change.source}).")
     for s in d.supporting[:3]:
         lines.append(f"- Corroborated by {_code(s.sig)} ({s.source}, {s.count:,}x).")
-    down = [x for x in d.downstream if x.rule and x.rule.role == "symptom"]
+    down = sorted(d.downstream, key=lambda x: x.onset)
     if down:
-        names = ", ".join(_code(x.sig, 60) for x in down[:3])
-        lines.append(f"- Followed by downstream symptoms: {names}.")
+        names = ", ".join(f"{_code(x.sig, 60)} ({x.source})" for x in down[:3])
+        lines.append(f"- Followed by: {names}.")
     return lines
 
 
@@ -179,6 +179,11 @@ def render(analysis: Analysis, diagnoses: Sequence[Diagnosis],
 
         out += ["", "### Recommended fix", ""]
         out += [f"{i}. {step}" for i, step in enumerate(d.fix, 1)]
+        if d.related_rules:
+            out += ["", "Later failures in the same incident have causes of "
+                        "their own; once the above is handled, check:", ""]
+            out += [f"- **{r.category}** (`{r.id}`): {r.fix[0]}"
+                    for r in d.related_rules]
 
         out += ["", "### Errors during the incident", ""]
         out += _table(["Count", "Level", "First", "Signature", "Source"],

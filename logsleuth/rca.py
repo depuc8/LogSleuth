@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from .analyze import Analysis, Incident
+from .context import STRONG_CHANGE_RE
 from .records import LEVELS, Record
 from .rules import Rule, match_rule
 
@@ -64,6 +65,21 @@ class Diagnosis:
             return []
         return [c for c in self.candidates[1:]
                 if c.onset >= self.cause.onset and c not in self.supporting]
+
+    @property
+    def related_rules(self) -> List[Rule]:
+        """Other known causes that showed up after the leading one.
+
+        In a chain (slow queries -> pool exhausted -> timeouts) the leading
+        cause is where to start, but the later links have fixes of their own.
+        """
+        seen = {self.rule.id} if self.rule else set()
+        out: List[Rule] = []
+        for c in sorted(self.downstream, key=lambda c: c.onset):
+            if c.rule and c.rule.role == "cause" and c.rule.id not in seen:
+                seen.add(c.rule.id)
+                out.append(c.rule)
+        return out
 
 
 def _candidates(inc: Incident, rules: List[Rule]) -> List[Candidate]:
@@ -164,7 +180,10 @@ def diagnose(analysis: Analysis, inc: Incident, rules: List[Rule]) -> Diagnosis:
     if cands:
         onset = min(c.onset for c in cands)
         before = [r for r in inc.changes if r.ts <= onset + analysis.width]
-        change = before[-1] if before else None
+        # a deliberate change (deploy, migration...) is a better suspect than
+        # a unit merely restarting, so prefer the latest of those
+        strong = [r for r in before if STRONG_CHANGE_RE.search(r.msg)]
+        change = (strong or before or [None])[-1]
     return Diagnosis(inc, cands, confidence, change)
 
 
