@@ -183,6 +183,9 @@ BEGIN {
     next
 }
 
+# blank lines are just spacing, not lost data
+/^[ \t\r]*$/ { next }
+
 { skipped++ }
 
 END {
