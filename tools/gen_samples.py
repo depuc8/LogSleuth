@@ -46,11 +46,13 @@ class Log:
                 f"{proc}[{pid}]: {msg}")
         self.syslog.append((ts, self._order(), line))
 
-    def app_line(self, ts, level, thread, logger, msg, ms=None):
+    def app_line(self, ts, level, thread, logger, msg, ms=None, trace=()):
         t = datetime.fromtimestamp(ts, timezone.utc)
         ms = random.randint(0, 999) if ms is None else ms
         line = (f"{t:%Y-%m-%d %H:%M:%S},{ms:03d} {level:<5} [{thread}] "
                 f"{logger} - {msg}")
+        if trace:
+            line += "\n" + "\n".join(trace)
         self.app.append((ts, self._order(), line))
 
     def write(self, directory):
@@ -172,6 +174,23 @@ def db_pool(out):
     log.sys(r + 14, "app01", "systemd", 1, "Started orders-api.service - Orders API.")
     log.app_line(r + 19, "INFO", "main", "c.a.orders.OrdersApplication",
                  "Starting OrdersApplication v2.13.4 with 20 pool connections")
+
+    # request failures that carry a stack trace; the root cause is only on
+    # the last "Caused by" line
+    for t in events(rng, e0 + 20, e1, lambda t: 6 if t < at(day, "02:25:00") else 1):
+        log.app_line(t, "ERROR", f"http-nio-8080-exec-{rng.randint(1, 20)}",
+                     "c.a.orders.OrderService",
+                     f"Order lookup failed for order {rng.randint(1000, 99999)}",
+                     trace=[
+                         "java.lang.IllegalStateException: could not load order",
+                         "\tat com.acme.orders.OrderService.find(OrderService.java:88)",
+                         "\tat com.acme.orders.OrderController.get(OrderController.java:41)",
+                         "Caused by: java.sql.SQLTransientConnectionException: "
+                         "HikariPool-1 - Connection is not available, request timed "
+                         "out after 30000ms.",
+                         "\tat com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)",
+                         "\t... 38 common frames omitted",
+                     ])
     log.write(out)
 
 

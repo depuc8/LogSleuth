@@ -72,6 +72,25 @@ assert_eq "gzip input" "gz works" "$(parse --year 2026 "$WORK/z.log.gz" | cut -f
 assert_eq "stdin input" "gz works" \
     "$(printf 'Jul 12 03:14:15 h p: gz works\n' | "$LS" parse --year 2026 - 2>/dev/null | cut -f5)"
 
+cat > "$WORK/trace.log" <<'TRACE'
+2026-07-21 02:19:01,100 ERROR [exec-3] c.a.OrderService - Order lookup failed
+java.lang.IllegalStateException: could not load order
+	at com.acme.OrderService.find(OrderService.java:88)
+Caused by: java.sql.SQLTransientConnectionException: pool timed out
+	... 38 common frames omitted
+2026-07-21 02:19:02,100 INFO  [exec-3] c.a.OrderService - recovered
+Traceback (most recent call last):
+  File "worker.py", line 12, in run
+ValueError: bad payload
+TRACE
+trace_out="$(parse "$WORK/trace.log")"
+assert_eq "stack trace is folded into its record" 2 "$(printf '%s\n' "$trace_out" | wc -l | tr -d ' ')"
+assert_contains "java root cause is appended" \
+    "Order lookup failed [java.sql.SQLTransientConnectionException: pool timed out]" "$trace_out"
+assert_contains "python exception is appended" "recovered [ValueError: bad payload]" "$trace_out"
+assert_contains "folded lines are counted" "7 stack trace lines folded in" \
+    "$("$LS" parse "$WORK/trace.log" 2>&1 >/dev/null)"
+
 # ----------------------------------------------------- level inference ----
 level_of() { printf 'Jul 12 03:14:15 h p: %s\n' "$1" > "$WORK/l.log"; parse --year 2026 "$WORK/l.log" | cut -f4; }
 assert_eq "level: oom is critical"  CRIT  "$(level_of 'Out of memory: Killed process 1')"

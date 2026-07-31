@@ -21,6 +21,11 @@
 #   source  label used in diagnostics (default: the input file name)
 #   quiet   set to 1 to suppress the per-file summary on stderr
 #
+# Stack traces: frames are dropped, and the last exception line of the trace
+# (the root cause in a Java "Caused by:" chain, the final line of a Python
+# traceback) is appended to the message of the record it belongs to as
+# "[ExceptionType: text]".
+#
 # Only POSIX awk features are used, so this runs on gawk, mawk and BSD awk.
 
 function month_num(m) {
@@ -71,10 +76,23 @@ function logfmt_get(line, key,    pat, v) {
     return ""
 }
 
-function emit(ts, host, proc, level, msg) {
+# A record is held back until the next one starts, so that any stack trace
+# lines that follow it can be folded into it.
+function flush(    msg) {
+    if (!have) return
+    msg = pend_msg
+    if (pend_exc != "") msg = msg " [" pend_exc "]"
     gsub(/\t/, " ", msg)
     sub(/[ \r]+$/, "", msg)
-    printf "%s\t%s\t%s\t%s\t%s\n", ts, host, proc, level, msg
+    printf "%s\t%s\t%s\t%s\t%s\n", pend_ts, pend_host, pend_proc, pend_level, msg
+    have = 0
+}
+
+function emit(ts, host, proc, level, msg) {
+    flush()
+    pend_ts = ts; pend_host = host; pend_proc = proc
+    pend_level = level; pend_msg = msg; pend_exc = ""
+    have = 1
     parsed++
 }
 
@@ -85,6 +103,8 @@ BEGIN {
     }
     parsed = 0
     skipped = 0
+    folded = 0
+    have = 0
 }
 
 # RFC 3164 syslog:  Jul 12 03:14:15 host proc[123]: message
@@ -186,10 +206,22 @@ BEGIN {
 # blank lines are just spacing, not lost data
 /^[ \t\r]*$/ { next }
 
+# stack trace lines belong to the record above them
+have && (/^[ \t]+at / || /^[ \t]+File "/ || /^Traceback \(most recent/ || \
+         /^[ \t]*\.\.\. [0-9]+ (more|common frames)/) { folded++; next }
+have && /^(Caused by: )?[A-Za-z_][A-Za-z0-9_.$]*(Exception|Error)(:|$)/ {
+    pend_exc = $0
+    sub(/^Caused by: /, "", pend_exc)
+    folded++
+    next
+}
+
 { skipped++ }
 
 END {
+    flush()
     if (quiet == 1) exit
-    printf "parse.awk: %s: %d records, %d lines skipped\n", \
-        (source != "" ? source : FILENAME), parsed, skipped > "/dev/stderr"
+    extra = (folded > 0) ? sprintf(", %d stack trace lines folded in", folded) : ""
+    printf "parse.awk: %s: %d records, %d lines skipped%s\n", \
+        (source != "" ? source : FILENAME), parsed, skipped, extra > "/dev/stderr"
 }
