@@ -160,6 +160,7 @@ describe an effect rather than a cause.
 $ make test       # unit tests (python unittest) and shell tests
 $ make demo       # analyze the bundled db-pool incident
 $ make samples    # regenerate samples/ (deterministic)
+$ make examples   # regenerate examples/*.rca.md from the samples
 ```
 
 `samples/` holds two generated incidents: `db-pool` (a release exhausts the
